@@ -1,0 +1,45 @@
+As a cashier, I want to scan items quickly and apply discounts, so that customers can complete purchases efficiently
+{
+	Basic Flow {
+		(User) 1. the cashier shall use tools to calculate price.
+		(User) 2. When customers abondon a good, the cashier shall cancle bill.
+		(System) 3. When bills complete, the CoCoME shall update remaining automaticly.
+		(User) 4. the cashier shall start a new bill.
+		(System) 5. When a bill ends, the system shall update good remaining.
+		(System) 6. When a bill ends, the system shall calucate price of bill for customers.
+		(User) 7. the customers shall return good.
+		(System) 8. When return a good, the system shall update good remaining.
+		(System) 9. When return a good, the system shall return money to cuscomers.
+	}
+}
+As a store manager, I want to generate daily sales reports, so that I can track revenue trends and adjust promotions
+{
+	Basic Flow {
+		(User) 1. the store manager shall get a daily sale report summary.
+		(System) 2. When store manager need a summary, the system shall generate daily sales reports.
+	}
+}
+As a customer, I want to view realtime product availability online, so that I can confirm items are in stock before visiting the_ store
+{
+	Basic Flow {
+		(User) 1. the customers shall choose goods they need.
+		(User) 2. the customers shall pay for bills.
+		(User) 3. the customers shall return a goods.
+	}
+}
+As a supplier, I want to receive automated purchase orders via system, so that I can fulfill deliveries without manual communication
+{
+	Basic Flow {
+		(User) 1. the supplier shall put goods from stroage.
+		(System) 2. When supplier put goods, the system shall update goods remaining.
+		(User) 3. the supplier shall notice remaining.
+		(User) 4. the supplier shall get infomation that goods number decrease.
+	}
+}
+As a system administrator, I want to manage role based permissions for all users, so that sensitive operations are restricted to authorized personnel
+{
+	Basic Flow {
+		(System) 1. the system shall offer a visable plantform for administrator to manage system.
+		(User) 2. the system administrator shall change info of system.
+	}
+}
