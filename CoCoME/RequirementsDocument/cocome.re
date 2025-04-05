@@ -1,0 +1,41 @@
+As a cashier, I want to scan items quickly and apply discounts, so that customers can complete purchases efficiently
+{
+	Basic Flow {
+		(User) 1. the cashier shall get price of a good.
+		(User) 2. the cashier shall return a good.
+		(System) 3. When return a good, the system shall update good remaining.
+		(System) 4. When return a good, the system shall return money to cuscomers.
+	}
+}
+As a store manager, I want to generate daily sales reports, so that I can track revenue trends and adjust promotions
+{
+	Basic Flow {
+		(User) 1. the store manager shall get a daily sale report summary.
+		(System) 2. When store manager need a summary, the system shall generate daily sales reports.
+		(User) 3. the store manager shall decide what goods need to supply.
+	}
+}
+As a customer, I want to view realtime product availability online, so that I can confirm items are in stock before visiting the_ store
+{
+	Basic Flow {
+		(User) 1. the customers shall choose goods they need.
+		(User) 2. the customers shall pay for bills.
+		(User) 3. the customers shall return a goods.
+	}
+}
+As a supplier, I want to receive automated purchase orders via system, so that I can fulfill deliveries without manual communication
+{
+	Basic Flow {
+		(User) 1. the supplier shall put goods from stroage.
+		(System) 2. When supplier put goods, the system shall update goods remaining.
+		(User) 3. the supplier shall notice remaining.
+	}
+}
+As a system administrator, I want to manage role based permissions for all users, so that sensitive operations are restricted to authorized personnel
+{
+	Basic Flow {
+		(System) 1. the system shall offer a visable plantform for administrator to manage system.
+		(User) 2. the system administrator shall change info of system.
+		(User) 3. the system administrator shall hanlder problems of system.
+	}
+}
