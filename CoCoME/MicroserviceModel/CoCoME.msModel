@@ -1,0 +1,403 @@
+MicroServiceModel CoCoME {
+	MicroService SupplierService {
+		ProvidedInterface recommendNewProducts{
+			[Operation]
+			recommendNewProducts
+		}
+		ProvidedInterface acceptPurchaseOrder{
+			[Operation]
+			acceptPurchaseOrder
+		}
+		ProvidedInterface manageSupplier{
+			[Operation]
+			createSupplier
+			querySupplier
+			updateSupplier
+			modifySupplier
+		}
+		RequiredInterface manageItem
+		RequiredInterface manageStore
+		RequiredInterface manageOrderProduct
+		DomainModel SupplierService {
+			@AutoCRUD Entity RecommendedProduct {
+				RecommendationId : Integer
+				ProductId : Integer
+				SupplierId : Integer
+				RecommendationTime : Date
+				RecommendationReason : String
+				[Refer]
+				Supplier : Supplier  Association
+			}
+			@AutoCRUD Entity Supplier {
+				Id : Integer
+				Name : String
+				[Refer]
+			}
+			@AutoCRUD Entity PurchaseOrder {
+				OrderId : Integer
+				SupplierId : Integer
+				StoreId : Integer
+				OrderTime : Date
+				ExpectedDeliveryTime : Date
+				TotalAmount : Real
+				IsReceived : Boolean
+				IsAccepted : Boolean
+				[Refer]
+				Supplier : Supplier  Association
+			}
+		}
+	}
+	MicroService StoreManagerService {
+		ProvidedInterface listSuppliers{
+			[Operation]
+			listSuppliers
+		}
+		ProvidedInterface orderProducts{
+			[Operation]
+			orderProducts
+		}
+		ProvidedInterface openStore{
+			[Operation]
+			openStore
+		}
+		ProvidedInterface changePrice{
+			[Operation]
+			changePrice
+		}
+		ProvidedInterface receiveOrderedProduct{
+			[Operation]
+			receiveOrderedProduct
+			CallChain receiveOrderedProduct {
+				service AdministratorService : AdministratorService {
+					Message 1 {
+						operation manageOrderProduct
+					}
+				}
+			}
+		}
+		ProvidedInterface showStockReports{
+			[Operation]
+			showStockReports
+		}
+		ProvidedInterface closeStore{
+			[Operation]
+			closeStore
+		}
+		ProvidedInterface manageStore{
+			[Operation]
+			createStore
+			queryStore
+			updateStore
+			modifyStore
+		}
+		ProvidedInterface manageItem{
+			[Operation]
+			createItem
+			queryItem
+			updateItem
+			modifyItem
+		}
+		RequiredInterface manageCashDesk
+		RequiredInterface manageCashier
+		RequiredInterface manageSale
+		RequiredInterface manageOrderProduct
+		DomainModel StoreManagerService {
+			@AutoCRUD Entity Item {
+				Barcode : Integer
+				Name : String
+				Price : Real
+				StockNumber : Integer
+				OrderPrice : Real
+				ItemID : Integer
+				[Refer]
+				BelongedCatalog : ProductCatalog  Association
+			}
+			@AutoCRUD Entity Store {
+				Id : Integer
+				Name : String
+				Address : String
+				IsOpened : Boolean
+				[Refer]
+				Productcatalogs : ProductCatalog  Association
+				Items : Item  Association
+			}
+			@AutoCRUD Entity ProductCatalog {
+				Id : Integer
+				Name : String
+				[Refer]
+				ContainedItems : Item  Association
+			}
+		}
+	}
+	MicroService CustomerService {
+		ProvidedInterface browseProducts{
+			[Operation]
+			browseProducts
+		}
+		ProvidedInterface addProductsToCart{
+			[Operation]
+			addProductsToCart
+		}
+		ProvidedInterface returnProducts{
+			[Operation]
+			returnProducts
+		}
+		ProvidedInterface checkOut{
+			[Operation]
+			checkOut
+		}
+		ProvidedInterface manageCustomer{
+			[Operation]
+			createCustomer
+			queryCustomer
+			updateCustomer
+			modifyCustomer
+		}
+		RequiredInterface manageSale
+		RequiredInterface manageReturnRequest
+		DomainModel CustomerService {
+			@AutoCRUD Entity Customer {
+				Id : Integer
+				Name : String
+				ContactInfo : String
+				MembershipLevel : String
+				[Refer]
+			}
+			 Entity AliPayment {
+				AlipayAccount : String
+				[Refer]
+			}
+			 Entity CardPayment {
+				CardAccountNumber : String
+				ExpiryDate : Date
+				[Refer]
+			}
+			 Entity WechatPayment {
+				OpenID : String
+				[Refer]
+			}
+			 Entity CashPayment {
+				Balance : Real
+				[Refer]
+			}
+		}
+	}
+	MicroService CashierService {
+		ProvidedInterface closeCashDesk{
+			[Operation]
+			closeCashDesk
+		}
+		ProvidedInterface sentProducts{
+			[Operation]
+			sentProducts
+		}
+		ProvidedInterface processSale{
+			[Operation]
+			processSale
+		}
+		ProvidedInterface openCashDesk{
+			[Operation]
+			openCashDesk
+		}
+		ProvidedInterface acceptOrder{
+			[Operation]
+			acceptOrder
+		}
+		ProvidedInterface manageCashDesk{
+			[Operation]
+			createCashDesk
+			queryCashDesk
+			updateCashDesk
+			modifyCashDesk
+		}
+		ProvidedInterface manageCashier{
+			[Operation]
+			createCashier
+			queryCashier
+			updateCashier
+			modifyCashier
+		}
+		ProvidedInterface manageSale{
+			[Operation]
+			createSale
+			querySale
+			updateSale
+			modifySale
+		}
+		RequiredInterface manageStore
+		RequiredInterface manageItem
+		DomainModel CashierService {
+			 Entity Sale {
+				Time : Date
+				IsComplete : Boolean
+				Amount : Real
+				IsReadytoPay : Boolean
+				PaymentMethod : String
+				IsPaid : Boolean
+				PaymentDetails : String
+				OrderId : Integer
+				[Refer]
+				BelongedCashDesk : CashDesk  Association
+				ContainedSalesLine : SalesLineItem  Association
+				AssoicatedPayment : Payment  Association
+			}
+			@AutoCRUD Entity Cashier {
+				Id : Integer
+				Name : String
+				[Refer]
+			}
+			@AutoCRUD Entity CashDesk {
+				Id : Integer
+				Name : String
+				IsOpened : Boolean
+				[Refer]
+				ContainedSales : Sale  Association
+			}
+			 Entity Payment {
+				AmountTendered : Real
+				[Refer]
+				BelongedSale : Sale  Association
+			}
+			 Entity SalesLineItem {
+				Quantity : Integer
+				Subamount : Real
+				BelongedCheckout : Sale
+				[Refer]
+				BelongedSale : Sale  Association
+			}
+		}
+	}
+	MicroService AdministratorService {
+		ProvidedInterface manageCashier{
+			[Operation]
+			createCashier
+			queryCashier
+			updateCashier
+			modifyCashier
+		}
+		ProvidedInterface manageSupplier{
+			[Operation]
+			createSupplier
+			querySupplier
+			updateSupplier
+			modifySupplier
+		}
+		ProvidedInterface manageStore{
+			[Operation]
+			createStore
+			queryStore
+			updateStore
+			modifyStore
+		}
+		ProvidedInterface analyzeSalesData{
+			[Operation]
+			analyzeSalesData
+		}
+		ProvidedInterface manageSurveillance{
+			[Operation]
+			createSurveillance
+			querySurveillance
+			updateSurveillance
+			modifySurveillance
+		}
+		ProvidedInterface manageReturn{
+			[Operation]
+			createReturn
+			queryReturn
+			updateReturn
+			modifyReturn
+		}
+		ProvidedInterface manageProductCatalog{
+			[Operation]
+			createProductCatalog
+			queryProductCatalog
+			updateProductCatalog
+			modifyProductCatalog
+		}
+		ProvidedInterface manageCashDesk{
+			[Operation]
+			createCashDesk
+			queryCashDesk
+			updateCashDesk
+			modifyCashDesk
+		}
+		ProvidedInterface manageItem{
+			[Operation]
+			createItem
+			queryItem
+			updateItem
+			modifyItem
+		}
+		ProvidedInterface manageReturnRequest{
+			[Operation]
+			createReturnRequest
+			queryReturnRequest
+			updateReturnRequest
+			modifyReturnRequest
+		}
+		ProvidedInterface manageOrderProduct{
+			[Operation]
+			createOrderProduct
+			queryOrderProduct
+			updateOrderProduct
+			modifyOrderProduct
+		}
+		RequiredInterface manageSupplier
+		RequiredInterface manageStore
+		RequiredInterface manageSale
+		RequiredInterface manageCustomer
+		RequiredInterface manageItem
+		DomainModel AdministratorService {
+			 Entity OrderProduct {
+				Id : Integer
+				Time : Date
+				OrderStatus : Integer
+				Amount : Real
+				[Refer]
+				ContainedEntries : OrderEntry  Association
+			}
+			@AutoCRUD Entity SurveillanceDevice {
+				DeviceId : Integer
+				Location : String
+				Status : String
+				LastMaintenanceTime : Date
+				[Refer]
+				Administrator : Administrator  Association
+			}
+			@AutoCRUD Entity Administrator {
+				Id : Integer
+				Name : String
+				Username : String
+				Password : String
+				[Refer]
+				HandledReturnRequests : ReturnRequest  Association
+				ConductedDataAnalysis : SalesDataAnalysisResult  Association
+				MonitoredDevices : SurveillanceDevice  Association
+			}
+			@AutoCRUD Entity SalesDataAnalysisResult {
+				AnalysisId : Integer
+				AnalysisTime : Date
+				TotalSalesAmount : Real
+				BestSellingProducts : String
+				SalesTrend : String
+				[Refer]
+				Administrator : Administrator  Association
+			}
+			@AutoCRUD Entity ReturnRequest {
+				RequestId : Integer
+				OrderId : Integer
+				ItemId : Integer
+				ReturnTime : Date
+				ReturnReason : String
+				IsApproved : Boolean
+				IsReviewed : Boolean
+				[Refer]
+			}
+			 Entity OrderEntry {
+				Quantity : Integer
+				SubAmount : Real
+				[Refer]
+			}
+		}
+	}
+}

@@ -1,34 +1,6 @@
 
 
-UseCaseModel CoCoME {
-
-	UC::processSale() definedBySSD(ProcessSaleSSD) relatedService(ProcessSaleService) @Description( "The cashier checks out items" )
-	UC::openCashDesk() @Description( "The cashier opens cash desk" )
-	UC::closeCashDesk() @Description( "The cashier closes cash desk" )
-	UC::orderProducts() @Description( "The store manager places an order for purchase" )
-	UC::receiveOrderedProduct() @Description( "The store manager receives the order for purchase" )
-	UC::showStockReports() @Description( "The store manager views the stock report" )
-	UC::changePrice() @Description( "The store manager changes the price of item" )
-	UC::listSuppliers() @Description( "The store manager views all suppliers" )
-	UC::openStore() @Description( "The store manager opens the store" )
-	UC::closeStore() @Description( "The store manager closes the store" )
-	UC::manageStore() @Description( "The administrator manages store information, including entering, inquiring, modifying and deleting of store information" )
-	UC::manageProductCatalog() @Description( "The administrator manages catalogues of items, including entering, inquiring, modifying and deleting of catalogue information" )
-	UC::manageCashDesk() @Description( "The administrator manages cash desk information, including entering, inquiring, modifying and deleting of cash desk information" )
-	UC::manageCashier() @Description( "The administrator manages cashier information, including entering, inquiring, modifying and deleting of cashier information" )
-	UC::manageItem() @Description( "The administrator manages item information, including entering, inquiring, modifying and deleting of item information" )
-	UC::manageSupplier() @Description( "The administrator manages supplier information, including entering, inquiring, modifying and deleting of supplier information" )
-	UC::browseProducts
-	UC::addProductsToCart
-	UC::checkOut definedBySSD(CheckOutSSD) relatedService(CheckOutService)
-	UC::returnProducts definedBySSD(ReturnProductsSSD) relatedService(ReturnProductsService)
-	UC::acceptPurchaseOrder include acceptOrder, sentProducts definedBySSD(AcceptPurchaseOrderSSD) relatedService(AcceptPurchaseOrderService)
-	UC::acceptOrder
-	UC::sentProducts
-	UC::recommendNewProducts
-	UC::manageReturn definedBySSD(ManageReturnSSD) relatedService(ManageReturnService)
-	UC::manageSurveillance
-	UC::analyzeSalesData
+UseCaseModel CoCoME { UseCaseContext CashierService { UC :: closeCashDesk() @Description( "The cashier closes cash desk" ) UC :: sentProducts UC :: processSale() definedBySSD(ProcessSaleSSD) relatedService(ProcessSaleService) @Description( "The cashier checks out items" ) UC :: openCashDesk() @Description( "The cashier opens cash desk" ) UC :: acceptOrder } UseCaseContext StoreManagerService { UC :: listSuppliers() @Description( "The store manager views all suppliers" ) UC :: orderProducts() @Description( "The store manager places an order for purchase" ) UC :: openStore() @Description( "The store manager opens the store" ) UC :: changePrice() @Description( "The store manager changes the price of item" ) UC :: receiveOrderedProduct() @Description( "The store manager receives the order for purchase" ) UC :: showStockReports() @Description( "The store manager views the stock report" ) UC :: closeStore() @Description( "The store manager closes the store" ) } UseCaseContext AdministratorService { UC :: manageCashier() @Description( "The administrator manages cashier information, including entering, inquiring, modifying and deleting of cashier information" ) UC :: manageSupplier() @Description( "The administrator manages supplier information, including entering, inquiring, modifying and deleting of supplier information" ) UC :: manageStore() @Description( "The administrator manages store information, including entering, inquiring, modifying and deleting of store information" ) UC :: analyzeSalesData UC :: manageSurveillance UC :: manageReturn definedBySSD(ManageReturnSSD) relatedService(ManageReturnService) UC :: manageProductCatalog() @Description( "The administrator manages catalogues of items, including entering, inquiring, modifying and deleting of catalogue information" ) UC :: manageCashDesk() @Description( "The administrator manages cash desk information, including entering, inquiring, modifying and deleting of cash desk information" ) UC :: manageItem() @Description( "The administrator manages item information, including entering, inquiring, modifying and deleting of item information" ) } UseCaseContext CustomerService { UC :: browseProducts UC :: addProductsToCart UC :: returnProducts definedBySSD(ReturnProductsSSD) relatedService(ReturnProductsService) UC :: checkOut definedBySSD(CheckOutSSD) relatedService(CheckOutService) } UseCaseContext SupplierService { UC :: recommendNewProducts UC :: acceptPurchaseOrder include acceptOrder, sentProducts definedBySSD(AcceptPurchaseOrderSSD) relatedService(AcceptPurchaseOrderService) }
 
 	Actor Cashier("Cashier") {
 		@Description( "The cashier is responsible for opening or closing the cash desk and the checkout of items") processSale
@@ -2319,50 +2291,7 @@ UseCaseModel CoCoME {
 
 }
 
-DomainModel CoCoME {
-
-	@AutoCRUD
-	Entity Store {
-		@Description( "The place where items are sold" ) Id : Integer
-		Name : String
-		Address : String
-		IsOpened : Boolean
-
-		[Refer]
-		AssociationCashdeskes : CashDesk* Association
-		Productcatalogs : ProductCatalog* Association
-		Items : Item* Association
-		Cashiers : Cashier* Association
-		Sales : Sale* ! Association
-		[INV]
-		inv UniqueStoreId : Store.allInstance()->isUnique(s:Store | s.Id)
-	}
-
-	@AutoCRUD
-	Entity ProductCatalog {
-		@Description( "The catalogue of items" ) Id : Integer
-		Name : String
-
-		[Refer]
-		ContainedItems : Item* Association
-		[INV]
-		inv UniqueProductCatalogId : ProductCatalog.allInstance()->isUnique(p:ProductCatalog | p.Id)
-	}
-
-	@AutoCRUD
-	Entity CashDesk {
-		@Description( "The cash desk in store" ) Id : Integer
-		Name : String
-		IsOpened : Boolean
-
-		[Refer]
-		ContainedSales : Sale* Association
-		BelongedStore : Store ! Association
-		[INV]
-		inv UniqueCashDeskId : CashDesk.allInstance()->isUnique(c:CashDesk | c.Id)
-	}
-
-	Entity Sale {
+DomainModel CoCoME { EntityContext CashierService { Entity Sale {
 		@Description( "The sales order for items" ) Time : Date
 		IsComplete: Boolean
 		Amount : Real
@@ -2379,9 +2308,7 @@ DomainModel CoCoME {
 		AssoicatedPayment : Payment Association
 		[INV]
 		inv AmountGreatAndEqualZero : Amount >= 0
-	}
-
-	@AutoCRUD
+	} @AutoCRUD
 	Entity Cashier {
 		@Description( "The cashier in store" ) Id : Integer
 		Name : String
@@ -2392,7 +2319,23 @@ DomainModel CoCoME {
 		inv UniqueCashierID : Cashier.allInstance()->isUnique(c:Cashier | c.Id)
 	}
 
-	Entity SalesLineItem {
+	@AutoCRUD
+	Entity CashDesk {
+		@Description( "The cash desk in store" ) Id : Integer
+		Name : String
+		IsOpened : Boolean
+
+		[Refer]
+		ContainedSales : Sale* Association
+		BelongedStore : Store ! Association
+		[INV]
+		inv UniqueCashDeskId : CashDesk.allInstance()->isUnique(c:CashDesk | c.Id)
+	} Entity Payment {
+		@Description( "The bill for the goods sold" ) AmountTendered : Real
+
+		[Refer]
+		BelongedSale : Sale ! Association
+	} Entity SalesLineItem {
 		@Description( "The sales order for a item" ) Quantity : Integer
 		Subamount : Real
 		BelongedCheckout:Sale
@@ -2400,9 +2343,7 @@ DomainModel CoCoME {
 		[Refer]
 		BelongedSale : Sale ! Association
 		BelongedItem : Item Association
-	}
-
-	@AutoCRUD
+	} } EntityContext StoreManagerService { @AutoCRUD
 	Entity Item {
 		@Description( "The item to be sold" ) Barcode : Integer
 		Name : String
@@ -2419,52 +2360,31 @@ DomainModel CoCoME {
 		inv StockNumberGreatThanEqualZero : StockNumber >= 0
 	}
 
-	Entity Payment {
-		@Description( "The bill for the goods sold" ) AmountTendered : Real
-
-		[Refer]
-		BelongedSale : Sale ! Association
-	}
-
-	Entity CashPayment extends Payment {
-		@Description( "Pay in cash" ) Balance : Real
-		[INV]
-		inv BalanceGreatAndEqualZero : Balance >= 0
-	}
-
-	Entity CardPayment extends Payment {
-		@Description( "Pay in card" ) CardAccountNumber : String
-		ExpiryDate : Date
-	}
-
-	// test 2
-	Entity WechatPayment extends Payment {
-		@Description( "Pay via Wechat" )
-    	OpenID : String // 微信支付中用于标识用户的唯一ID
-	}
-
-	Entity AliPayment extends Payment {
-		@Description( "Pay via Alipay" )
-   		AlipayAccount : String // 支付宝账号
-	}
-
-	Entity OrderEntry {
-		@Description( "The purchase order for a item" ) Quantity : Integer
-		SubAmount : Real
-
-		[Refer]
-		Item : Item Association
-	}
-
-	@AutoCRUD 
-	Entity Supplier {
-		@Description( "The supplier of items" ) Id : Integer
+	@AutoCRUD
+	Entity Store {
+		@Description( "The place where items are sold" ) Id : Integer
 		Name : String
-		[INV]
-		inv UniqueSupplier : Supplier.allInstance()->isUnique(s:Supplier | s.Id)
-	}
+		Address : String
+		IsOpened : Boolean
 
-	Entity OrderProduct {
+		[Refer]
+		AssociationCashdeskes : CashDesk* Association
+		Productcatalogs : ProductCatalog* Association
+		Items : Item* Association
+		Cashiers : Cashier* Association
+		Sales : Sale* ! Association
+		[INV]
+		inv UniqueStoreId : Store.allInstance()->isUnique(s:Store | s.Id)
+	} @AutoCRUD
+	Entity ProductCatalog {
+		@Description( "The catalogue of items" ) Id : Integer
+		Name : String
+
+		[Refer]
+		ContainedItems : Item* Association
+		[INV]
+		inv UniqueProductCatalogId : ProductCatalog.allInstance()->isUnique(p:ProductCatalog | p.Id)
+	} } EntityContext AdministratorService { Entity OrderProduct {
 		@Description( "The purchase order for items" ) Id : Integer
 		Time : Date
 		OrderStatus : OrderStatus[NEW|RECEIVED|REQUESTED]
@@ -2476,40 +2396,6 @@ DomainModel CoCoME {
 	}
 
 	// new 7
-	@AutoCRUD
-	Entity Customer {
-		@Description( "The customer who makes transactions" )
-    	Id : Integer
-		Name : String
-		ContactInfo : String
-		MembershipLevel : String
-
-		[Refer]
-		Sales : Sale* Association
-		ReturnRequests : ReturnRequest* Association
-		[INV]
-    	inv UniqueCustomerId : Customer.allInstance()->isUnique(c:Customer | c.Id)
-	}
-
-	@AutoCRUD
-	Entity ReturnRequest {
-		@Description( "The request for returning items" )
-    	RequestId : Integer
-		OrderId : Integer
-		ItemId : Integer
-		ReturnTime : Date
-		ReturnReason : String
-		IsApproved : Boolean
-		IsReviewed:Boolean
-
-		[Refer]
-		Customer : Customer Association
-		Sale : Sale Association
-		Item : Item Association
-		[INV]
-    	inv UniqueReturnRequestId : ReturnRequest.allInstance()->isUnique(rr:ReturnRequest | rr.RequestId)
-	}
-
 	@AutoCRUD
 	Entity SurveillanceDevice {
 		@Description( "The device for monitoring store status" )
@@ -2523,59 +2409,6 @@ DomainModel CoCoME {
 		Administrator : Administrator Association
 		[INV]
     	inv UniqueSurveillanceDeviceId : SurveillanceDevice.allInstance()->isUnique(sd:SurveillanceDevice | sd.DeviceId)
-	}
-
-	@AutoCRUD
-	Entity SalesDataAnalysisResult {
-		@Description( "The result of sales data analysis" )
-    	AnalysisId : Integer
-		AnalysisTime : Date
-		TotalSalesAmount : Real
-		BestSellingProducts : String
-		SalesTrend : String
-
-		[Refer]
-		Administrator : Administrator Association
-		Sale : Sale Association
-		[INV]
-    	inv UniqueAnalysisId : SalesDataAnalysisResult.allInstance()->isUnique(sdar:SalesDataAnalysisResult | sdar.AnalysisId)
-	}
-
-	@AutoCRUD
-	Entity PurchaseOrder {
-		@Description( "The order for purchasing items" )
-    	OrderId : Integer
-		SupplierId : Integer
-		StoreId : Integer
-		OrderTime : Date
-		ExpectedDeliveryTime : Date
-		TotalAmount : Real
-		IsReceived : Boolean
-		IsAccepted: Boolean
-
-		[Refer]
-		Supplier : Supplier Association
-		Store : Store Association
-		OrderProduct : OrderProduct Association
-		[INV]
-    	inv UniquePurchaseOrderId : PurchaseOrder.allInstance()->isUnique(po:PurchaseOrder | po.OrderId)
-	}
-
-	@AutoCRUD
-	Entity RecommendedProduct {
-		@Description( "The product recommended by supplier" )
-    	RecommendationId : Integer
-		ProductId : Integer
-		SupplierId : Integer
-		RecommendationTime : Date
-		RecommendationReason : String
-
-		[Refer]
-		Supplier : Supplier Association
-		Item : Item Association
-		Store : Store Association
-		[INV]
-    	inv UniqueRecommendationId : RecommendedProduct.allInstance()->isUnique(rp:RecommendedProduct | rp.RecommendationId)
 	}
 
 	@AutoCRUD
@@ -2595,5 +2428,119 @@ DomainModel CoCoME {
     	inv UniqueAdministratorId : Administrator.allInstance()->isUnique(a:Administrator | a.Id)
 	}
 
-}
+@AutoCRUD
+	Entity SalesDataAnalysisResult {
+		@Description( "The result of sales data analysis" )
+    	AnalysisId : Integer
+		AnalysisTime : Date
+		TotalSalesAmount : Real
+		BestSellingProducts : String
+		SalesTrend : String
 
+		[Refer]
+		Administrator : Administrator Association
+		Sale : Sale Association
+		[INV]
+    	inv UniqueAnalysisId : SalesDataAnalysisResult.allInstance()->isUnique(sdar:SalesDataAnalysisResult | sdar.AnalysisId)
+	}
+
+	@AutoCRUD
+	Entity ReturnRequest {
+		@Description( "The request for returning items" )
+    	RequestId : Integer
+		OrderId : Integer
+		ItemId : Integer
+		ReturnTime : Date
+		ReturnReason : String
+		IsApproved : Boolean
+		IsReviewed:Boolean
+
+		[Refer]
+		Customer : Customer Association
+		Sale : Sale Association
+		Item : Item Association
+		[INV]
+    	inv UniqueReturnRequestId : ReturnRequest.allInstance()->isUnique(rr:ReturnRequest | rr.RequestId)
+	} Entity OrderEntry {
+		@Description( "The purchase order for a item" ) Quantity : Integer
+		SubAmount : Real
+
+		[Refer]
+		Item : Item Association
+	} } EntityContext CustomerService {
+
+	// new 7
+	@AutoCRUD
+	Entity Customer {
+		@Description( "The customer who makes transactions" )
+    	Id : Integer
+		Name : String
+		ContactInfo : String
+		MembershipLevel : String
+
+		[Refer]
+		Sales : Sale* Association
+		ReturnRequests : ReturnRequest* Association
+		[INV]
+    	inv UniqueCustomerId : Customer.allInstance()->isUnique(c:Customer | c.Id)
+	}
+
+	Entity AliPayment extends Payment {
+		@Description( "Pay via Alipay" )
+   		AlipayAccount : String // 支付宝账号
+	} Entity CardPayment extends Payment {
+		@Description( "Pay in card" ) CardAccountNumber : String
+		ExpiryDate : Date
+	}
+
+	// test 2
+	Entity WechatPayment extends Payment {
+		@Description( "Pay via Wechat" )
+    	OpenID : String // 微信支付中用于标识用户的唯一ID
+	} Entity CashPayment extends Payment {
+		@Description( "Pay in cash" ) Balance : Real
+		[INV]
+		inv BalanceGreatAndEqualZero : Balance >= 0
+	} } EntityContext SupplierService {
+
+	@AutoCRUD
+	Entity RecommendedProduct {
+		@Description( "The product recommended by supplier" )
+    	RecommendationId : Integer
+		ProductId : Integer
+		SupplierId : Integer
+		RecommendationTime : Date
+		RecommendationReason : String
+
+		[Refer]
+		Supplier : Supplier Association
+		Item : Item Association
+		Store : Store Association
+		[INV]
+    	inv UniqueRecommendationId : RecommendedProduct.allInstance()->isUnique(rp:RecommendedProduct | rp.RecommendationId)
+	}
+	@AutoCRUD 
+	Entity Supplier {
+		@Description( "The supplier of items" ) Id : Integer
+		Name : String
+		[INV]
+		inv UniqueSupplier : Supplier.allInstance()->isUnique(s:Supplier | s.Id)
+	} @AutoCRUD
+	Entity PurchaseOrder {
+		@Description( "The order for purchasing items" )
+    	OrderId : Integer
+		SupplierId : Integer
+		StoreId : Integer
+		OrderTime : Date
+		ExpectedDeliveryTime : Date
+		TotalAmount : Real
+		IsReceived : Boolean
+		IsAccepted: Boolean
+
+		[Refer]
+		Supplier : Supplier Association
+		Store : Store Association
+		OrderProduct : OrderProduct Association
+		[INV]
+    	inv UniquePurchaseOrderId : PurchaseOrder.allInstance()->isUnique(po:PurchaseOrder | po.OrderId)
+	} } }
